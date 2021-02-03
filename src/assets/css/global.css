@@ -1,0 +1,104 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body {
+    width: 100%;
+    min-width: 20rem;
+    max-width: 67.5rem;
+    margin: 0 auto;
+    background: #f6f6f6;
+    font-family: -apple-system, Helvetica, sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.5;
+    color: #666;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+img {
+    vertical-align: top;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+a {
+    color: #666;
+    text-decoration: none;
+}
+/* 登录 修改mint-ui样式 */
+.form_table .mint-cell-wrapper{
+    border-bottom:1px solid rgba(255, 255, 255, .2) ;
+    background: none;
+    padding: 0;
+}
+.form_table .mint-cell-wrapper input{
+    background: none;
+    color: #eee;
+}
+.form_table .mint-cell-wrapper input::-webkit-input-placeholder {
+    color: #c0c4cc;
+}
+.form_table .mint-cell-wrapper input::-moz-input-placeholder {
+  color: #c0c4cc;
+}
+.form_table .mint-cell-wrapper input::-ms-input-placeholder {
+  color: #c0c4cc;
+}
+.mint-field-clear{
+      opacity: 1!important;
+}
+input:-internal-autofill-selected {
+    appearance: menulist-button;
+    background:none !important;
+    color: #eee !important;
+}
+input:disabled{
+    background: none;
+}
+/* list 样式调整 */
+.plug-info .mint-cell-wrapper{
+    background: none;
+}
+.plug-info .mint-cell-wrapper input{
+    color: #999;
+}
+.plug-info .mint-cell-wrapper input::-webkit-input-placeholder {
+    color: #c0c4cc;
+}
+.plug-info .mint-cell-wrapper input::-moz-input-placeholder {
+  color: #c0c4cc;
+}
+.plug-info .mint-cell-wrapper input::-ms-input-placeholder {
+  color: #c0c4cc;
+}
+
+.detail-container .mint-header-title{
+    font-size: 1rem;
+} 
+.detail-container .mint-cell-wrapper .mint-cell-title{
+    min-width: 25vw;
+}
+.detail-container  .info-describe .mint-cell-value{
+    font-size: .875rem;
+    line-height: 1.375rem;
+}
+
+.mintui-field-success{
+    color: #26a2ff;
+    font-size: 1.25rem!important;
+    vertical-align: middle;
+}
+.mintui-field-error{
+    font-size: 1.25rem!important;
+    vertical-align: middle;
+
+}
