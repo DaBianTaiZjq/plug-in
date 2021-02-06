@@ -2,33 +2,49 @@
     <div class="login_container">
         <div class="logo">
             <img src="..\assets\logo.png" alt="logo" />
-            <span>派工领料</span>
+            <span>派单领料</span>
         </div>
         <div class="form_table">
-          <mt-field label="客户端" placeholder="请选择客户端" v-model="form.type"></mt-field>
-          <mt-field label="用户名" placeholder="请输入用户名" v-model="form.username" autocomplete="off"></mt-field>
+          <!-- <mt-field label="客户端" placeholder="请选择客户端" v-model="form.type"></mt-field> -->
+          <mt-field label="用户名" placeholder="请输入用户名" v-model="form.account" autocomplete="off"></mt-field>
           <mt-field label="密码" placeholder="请输入密码" type="password" v-model="form.password" autocomplete="off"></mt-field>
           <mt-button type="primary" @click="logining">登录</mt-button>
         </div>
     </div>
 </template>
 <script>
+import { Toast,MessageBox } from 'mint-ui';
 export default {
     name:"login",
     data(){
         return{
             msg:'登录',
             form:{
-                type:null,
-                username:'',
+                account:'',
                 password:''
             }
         }
     },
     methods:{
         logining(){
-            window.sessionStorage.setItem('token','token');
-            this.$router.push({ path:'/list'})
+            if(this.form.account&&this.form.password){
+                this.$http.get('/Login/Verify',
+                {params:this.form})
+                  .then(res=>{
+                      console.log(res);
+                      if(res.data.success){
+                            window.sessionStorage.setItem('token',res.data.data);
+                            Toast({
+                              message: res.data.message
+                            });
+                            this.$router.push({ path:'/list'});
+                      }else{
+                            MessageBox('提示', res.data.message);
+                      }
+                });
+            }else{
+                MessageBox('提示', "账号密码不能为空！");
+            }
         }
     }
 }

@@ -17,10 +17,15 @@ var router = new VueRouter({
             path:'/login',component:Login
         },
         {            
-            path: '/list',component: List
+            path: '/list',component: List,
+            meta: {
+                keepAlive: true
+            }
         },
         {            
-            path: '/detail/:id',component: Detail
+            path: '/detail',
+            query:{},
+            component: Detail
         }
     ]
 })

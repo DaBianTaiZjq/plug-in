@@ -6,46 +6,55 @@
           </router-link>
         </mt-header>
         <div class="detail-info">
-            <mt-cell title="产品编码" :value="info.code"></mt-cell>
-            <mt-cell title="产品描述" class="info-describe" :value="info.describe"></mt-cell>
-            <mt-cell title="工序号" :value="info.idNo"></mt-cell>
-            <mt-cell title="工序名称" :value="info.name"></mt-cell>
-            <mt-cell title="生产订单数量" :value="info.orders"></mt-cell>
-            <mt-cell title="派工数量" :value="info.number"></mt-cell>
-            <mt-cell title="合格数量" :value="info.qualified"></mt-cell>
-            <mt-cell title="已领取" icon="field-success">
-                <span style="color: #4caf50">{{info.username}}</span>
+            <mt-cell title="产品编码" :value="info.ShortChar03"></mt-cell>
+            <mt-cell title="产品描述" class="info-describe" :value="info.ShortChar04"></mt-cell>
+            <mt-cell title="工序号" :value="info.ShortChar06"></mt-cell>
+            <mt-cell title="工序名称" :value="info.ShortChar06Memo"></mt-cell>
+            <mt-cell title="生产订单数量" :value="info.number04"></mt-cell>
+            <mt-cell title="派工数量" :value="info.number01"></mt-cell>
+            <mt-cell title="合格数量" :value="info.number06"></mt-cell>
+            <mt-cell v-if="info.IsReceived" title="已领取" icon="field-success">
+                <span style="color: #4caf50">{{info.Recipients}}</span>
             </mt-cell>
-            <mt-cell title="未领取" icon="field-error">
+            <mt-cell v-else title="未领取" icon="field-error">
             </mt-cell>
-            <mt-button type="primary">领料确认</mt-button>
+            <mt-button v-if="!info.IsReceived" type="primary" @click="ConfirmReceipt">领料确认</mt-button>
         </div>
     </div>
 </template>
 <script>
+import { MessageBox,Toast } from 'mint-ui';
 export default {
     name:"list",
     data(){
         return{
-            msg:'详情',
-            id:this.$route.params.id, // 将路由参数对象中的id挂载到data
-            info:{
-                code:this.$route.params.id,
-                describe:'LSPQ3-160D三履带牵引机机械部分滚滚滚，160D三履带牵引机机械部分滚滚滚',
-                idNo:'0012',
-                name:'喷涂.喷漆',
-                orders:2,
-                number:1,
-                qualified:1,
-                status:0,
-                username:'无名氏'               
-            }
+            info:this.$route.query
         }
     },
     methods:{
-        getInfo(){
-            // alert(this.info.idNo);
-            console.log(this.info.idNo);
+        // 领取
+        ConfirmReceipt(){
+            let params={
+                orderNumber:this.info.key1,
+                detailNumber:this.info.ChildKey1,
+                materialNumber:this.info.ShortChar03
+            }
+            MessageBox.confirm("是否确认领取该物料？", "").then(() => {
+                this.$http.post('/Material/ConfirmReceipt',params)
+                  .then(res=>{
+                      if(res.data.success){
+                          const {data}=res;
+                          this.info.IsReceived=true;
+                          console.log(data);
+                      }else{
+                          MessageBox('提示', res.data.message);
+                      }
+                  }).catch(()=>{
+                      MessageBox('', "领取失败");
+                  });
+            }).catch(()=>{
+                Toast({message: "已取消"});
+            })
         }
     }
 }

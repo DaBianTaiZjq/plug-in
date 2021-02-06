@@ -3,13 +3,13 @@
         <mt-header fixed title="领料确认"></mt-header>
         <div class="plug-info">
             <ul>
-                <li><mt-field label="派工单号：" placeholder="请输入派工单号" v-model="info.idNo" @blur.native.capture="getInfo" ></mt-field></li>
-                <li><mt-field label="工单部门：" v-model="info.department" disabled></mt-field></li>
-                <li><mt-field label="派工日期：" v-model="info.date" disabled></mt-field></li>
-                <li><mt-field label="派工员：" v-model="info.username" disabled></mt-field></li>
+                <li><mt-field label="派工单号：" placeholder="请输入派工单号" v-model="order.key1" @blur.native.capture="getInfo" ></mt-field></li>
+                <li><mt-field label="工单部门：" v-model="order.Shortchar01Memo" disabled></mt-field></li>
+                <li><mt-field label="派工日期：" v-model="order.date01" disabled></mt-field></li>
+                <li><mt-field label="派工员：" v-model="order.Shortchar07Memo" disabled></mt-field></li>
             </ul>
         </div>
-        <div class="plug-table">            
+        <div class="plug-table" v-if="orderDetail">
             <table cellspacing="0">
                 <thead>
                     <tr>
@@ -20,15 +20,15 @@
                     </tr>
                 </thead>
                 <tbody id="tb">
-                    <tr v-for="item in info.rows" :key="item.idNo">
-                        <td>{{item.idNo}}</td>
-                        <td>{{item.describe}}</td>
+                    <tr v-for="item in orderDetail" :key="item.ShortChar03">
+                        <td><span>{{item.key1}}</span></td>
+                        <td><span>{{item.ShortChar04}}</span></td>
                         <td>
-                            <i v-if="item.status===1" class="mintui mintui-field-success"></i>
+                            <i v-if="item.IsReceived" class="mintui mintui-field-success"></i>
                             <i v-else class="mintui mintui-field-error"></i>
                         </td>
                         <td>
-                            <router-link :to="'/detail/'+item.idNo">                            
+                            <router-link :to="{path:'/detail',query:item}">
                                 <mt-button type="primary" size="small">查看</mt-button>
                             </router-link>
                         </td>
@@ -39,29 +39,36 @@
     </div>
 </template>
 <script>
+import { MessageBox } from 'mint-ui';
 export default {
     name:"list",
     data(){
         return{
             msg:'列表',
-            info:{
-                idNo:'',
-                department:'装配车间',
-                date:'2020年12月8日',
-                username:'江汉武',
-                rows:[
-                    {idNo:'000500009770',describe:'LSPQ3-160D三履带牵引机机械部分滚滚滚',status:1},
-                    {idNo:'000500010778',describe:'LSPQ3-160D三履带牵引机机械部分',status:0},
-                    {idNo:'000500012441',describe:'LSPQ3-160D三履带牵引机机械部分',status:0},
-                    {idNo:'000500324589',describe:'LSPQ3-160D三履带牵引机机械部分',status:1}
-                ]
-            }
+            order:{},
+            orderDetail:null,
         }
     },
     methods:{
         getInfo(){
-            // alert(this.info.idNo);
-            console.log(this.info.idNo);
+            if(this.order.key1){
+                let params={
+                    orderNumber:this.order.key1
+                }
+              this.$http.post('/Material/GetMaterials',params)
+                .then(res=>{
+                    if(res.data.success){
+                        console.log(res);
+                        const {orderDetail,order}=res.data.data;
+                        this.order=order;
+                        this.orderDetail=orderDetail;
+                    }else{
+                        MessageBox('提示', res.data.message);
+                    }
+              });
+            }else{
+                this.info={}
+            }    
         }
     }
 }
@@ -106,7 +113,15 @@ export default {
             font-size: .875rem;
             font-weight: normal;
             color: #999;
-            max-width: 25vw;
+            max-width: 24vw;
+            padding: .3125rem;
+            span{
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                overflow: hidden;
+                text-overflow:ellipsis;
+            }
             .mintui-field-success{
                 color: #26a2ff;
             }
