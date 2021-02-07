@@ -44,10 +44,12 @@ export default {
     name:"list",
     data(){
         return{
-            msg:'列表',
             order:{},
             orderDetail:null,
         }
+    },
+    activated(){
+        this.getInfo();
     },
     methods:{
         getInfo(){
@@ -63,11 +65,19 @@ export default {
                         this.order=order;
                         this.orderDetail=orderDetail;
                     }else{
-                        MessageBox('提示', res.data.message);
+                        MessageBox('提示', res.data.message).then(()=>{
+                            if(res.data.code===100){
+                                this.$router.push({ path:'/login'});
+                            }
+                        });
                     }
+              })
+              .catch((err)=>{
+                      MessageBox('', err);
               });
             }else{
-                this.info={}
+                this.order={};
+                this.orderDetail=null
             }    
         }
     }

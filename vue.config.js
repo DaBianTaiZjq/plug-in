@@ -5,7 +5,7 @@ module.exports={
       // 例如：http://172.20.109.163:9001/Login/Verify?account=manager&password=654321
       // proxy:{
       //   '/api':{
-      //     target:'http://172.20.109.163:9001/Lesso/',
+      //     target:'http://172.20.109.163:10000/Lesso/',
       //     changeOrigin: true,
       //     pathRewrite:{
       //       '^/api':''

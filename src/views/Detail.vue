@@ -1,8 +1,8 @@
 <template>
     <div class="detail-container">
-        <mt-header title="生产单明细">
+        <mt-header title="生产单明细"> -->
           <router-link to="/list" slot="left">
-            <mt-button>返回</mt-button>
+            <mt-button @click="back">返回</mt-button>
           </router-link>
         </mt-header>
         <div class="detail-info">
@@ -13,7 +13,7 @@
             <mt-cell title="生产订单数量" :value="info.number04"></mt-cell>
             <mt-cell title="派工数量" :value="info.number01"></mt-cell>
             <mt-cell title="合格数量" :value="info.number06"></mt-cell>
-            <mt-cell v-if="info.IsReceived" title="已领取" icon="field-success">
+            <mt-cell v-if="info.IsReceived" title="已领取" :label="'领取时间：'+info.ReceiveTime" icon="field-success">
                 <span style="color: #4caf50">{{info.Recipients}}</span>
             </mt-cell>
             <mt-cell v-else title="未领取" icon="field-error">
@@ -47,14 +47,22 @@ export default {
                           this.info.IsReceived=true;
                           console.log(data);
                       }else{
-                          MessageBox('提示', res.data.message);
+                          MessageBox('提示', res.data.message)
+                          .then(()=>{
+                            if(res.data.code===100){
+                                this.$router.push({ path:'/login'});
+                            }
+                        });
                       }
-                  }).catch(()=>{
-                      MessageBox('', "领取失败");
+                  }).catch((err)=>{
+                      MessageBox('', err);
                   });
             }).catch(()=>{
                 Toast({message: "已取消"});
             })
+        },
+        back(){
+            this.$router.go(-1);
         }
     }
 }
