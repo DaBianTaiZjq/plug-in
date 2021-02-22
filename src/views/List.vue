@@ -1,12 +1,11 @@
 <template>
-    <div class="plug-container">
+    <div :class="['plug-container',{'whiteBg':!orderDetail}]">
         <mt-header fixed title="领料确认"></mt-header>
         <div class="plug-info">
             <ul>
                 <li>
-                    <mt-field label="派工单号：" placeholder="请输入派工单号" v-model="order.key1" @blur.native.capture="getInfo">
-                        <mt-button type="primary" plain size="small"  @click.native="handleClick">扫一扫</mt-button>
-                    </mt-field>
+                    <mt-field class="orderKey" label="派工单号：" placeholder="请输入派工单号" v-model="order.key1" @blur.native.capture="getInfo"></mt-field>                    
+                    <mt-button class="scanBtn" type="primary" plain size="small"  @click.native="handleClick">扫一扫</mt-button>
                 </li>
                 
                 <!-- <li><mt-field label="派工单号：" placeholder="请输入派工单号" v-model="order.key1" @blur.native.capture="getInfo"></mt-field></li> -->
@@ -28,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody id="tb">
-                    <tr v-for="item in orderDetail" :key="item.ShortChar03">
+                    <tr v-for="item in orderDetail" :key="item.ShortChar03+item.ChildKey1">
                         <td><span>{{item.key1}}</span></td>
                         <td><span>{{item.ShortChar04}}</span></td>
                         <td>
@@ -37,7 +36,7 @@
                         </td>
                         <td>
                             <router-link :to="{path:'/detail',query:item}">
-                                <mt-button type="primary" size="small">查看</mt-button>
+                                <mt-button type="primary" plain size="small">查看</mt-button>
                             </router-link>
                         </td>
                     </tr>
@@ -57,12 +56,26 @@ export default {
             orderDetail:null,
         }
     },
+    created(){
+        sessionStorage.removeItem("QRCodeResult")
+    },
     activated(){
+        if(sessionStorage.getItem("QRCodeResult")){
+            this.order.key1=sessionStorage.getItem("QRCodeResult");
+        }
         this.getInfo();
     },
+    // //侦听器
+    // watch: {
+    //   "order.key1": function (newValue, oldValue) {
+    //     if (newValue!=oldValue) {
+    //       this.getInfo();
+    //     }
+    //   }
+    // },
     methods:{
         handleClick(){
-            // this.$router.push({ path:'/ScanCode'});
+            this.$router.push({ path:'/qrcode'});
         },
         getInfo(){
             if(this.order.key1){
@@ -82,6 +95,9 @@ export default {
                               if(res.data.code===100){
                                   this.$router.push({ path:'/login'});
                               }
+                              this.showOrder=false;
+                              this.order={};
+                              this.orderDetail=null;
                           });
                       }
                 })
@@ -98,16 +114,32 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.plug-container{
+.whiteBg{
     background-color:#fff;
-    min-height: 100vh;
+}
+.plug-container{
+    height: 100vh;
     .mint-header{
         font-size:1rem;        
     }
     .plug-info{
         height: 10rem;
-        margin-top: 2.5rem;
+        margin-top: 3.125rem;
         font-size: 1rem;
+        background-color:#fff;
+        ul{
+            li:first-child{
+                display: flex;
+                justify-content: space-between;
+                .orderKey{
+                    flex: 60%;
+                }
+                .scanBtn{
+                    width: 6.25rem;
+                    margin:.375rem;
+                }
+            }
+        }
         .mint-cell{
             min-height: 2.5rem;
         }
@@ -116,10 +148,15 @@ export default {
         }
     }
     .plug-table{
+        margin-top: .625rem;
         padding: .625rem;
+        background-color:#fff;
         table {
             width: 100%;
-            border: .0625rem solid #ccc;
+            border: .0625rem solid #eee;
+            .mint-button--small{
+                height: 1.75rem;
+            }
         }        
         tr {
             width: 100%;
@@ -128,11 +165,11 @@ export default {
         }        
         thead {
             font-size: .875rem;
-            background: #eee;
-            color: #666;
+            background: #f8f8f8;
+            color: #999;
         }       
         th {
-            border-right: .0625rem solid #ddd;
+            border-right: .0625rem solid #eee;
         }    
         td{
             border-bottom: .0625rem solid #eee;

@@ -2,7 +2,7 @@
     <div class="detail-container">
         <mt-header title="生产单明细"> -->
           <router-link to="/list" slot="left">
-            <mt-button @click="back">返回</mt-button>
+            <mt-button>返回</mt-button>
           </router-link>
         </mt-header>
         <div class="detail-info">
@@ -45,6 +45,7 @@ export default {
                       if(res.data.success){
                           const {data}=res;
                           this.info.IsReceived=true;
+                          this.info.ReceiveTime=this.getYearMonthDate();
                           console.log(data);
                       }else{
                           MessageBox('提示', res.data.message)
@@ -62,8 +63,13 @@ export default {
                 Toast({message: "已取消"});
             })
         },
-        back(){
-            this.$router.go(-1);
+        // 获取年月
+        getYearMonthDate() {
+          var date = new Date();
+          var year = date.getFullYear();
+          var month = date.getMonth() + 1;
+          var dates = date.getDate();
+          return `${year}-${month < 10 ? "0" + month : month}-${dates<10?"0"+dates:dates}`
         }
     }
 }

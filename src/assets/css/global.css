@@ -80,6 +80,9 @@ input:disabled{
 .plug-info .mint-cell-wrapper input::-ms-input-placeholder {
   color: #c0c4cc;
 }
+.plug-info .mint-field .mint-cell-title{
+    width: 5.625rem;
+}
 
 .detail-container .mint-header-title{
     font-size: 1rem;
