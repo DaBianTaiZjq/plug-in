@@ -54,7 +54,7 @@ a {
   color: #c0c4cc;
 }
 .mint-field-clear{
-      opacity: 1!important;
+      opacity: .7!important;
 }
 input:-internal-autofill-selected {
     appearance: menulist-button;
@@ -100,5 +100,9 @@ input:disabled{
 .mintui-field-error{
     font-size: 1.25rem!important;
     vertical-align: middle;
-
+    /* color: #333; */
+}
+.pwdBtn
+.mint-field-clear{
+      opacity: .6!important;
 }

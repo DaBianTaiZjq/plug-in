@@ -52,10 +52,11 @@ export default {
                             if(res.data.code===100){
                                 this.$router.push({ path:'/login'});
                             }
-                        });
+                          });
                       }
                   }).catch((err)=>{
-                      MessageBox('', err);
+                      console.log(err);
+                      MessageBox('', '抱歉，请求失败，请稍后再试~');
                   });
             }).catch(()=>{
                 Toast({message: "已取消"});

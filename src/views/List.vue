@@ -3,10 +3,18 @@
         <mt-header fixed title="领料确认"></mt-header>
         <div class="plug-info">
             <ul>
-                <li><mt-field label="派工单号：" placeholder="请输入派工单号" v-model="order.key1" @blur.native.capture="getInfo" ></mt-field></li>
-                <li><mt-field label="工单部门：" v-model="order.Shortchar01Memo" disabled></mt-field></li>
-                <li><mt-field label="派工日期：" v-model="order.date01" disabled></mt-field></li>
-                <li><mt-field label="派工员：" v-model="order.Shortchar07Memo" disabled></mt-field></li>
+                <li>
+                    <mt-field label="派工单号：" placeholder="请输入派工单号" v-model="order.key1" @blur.native.capture="getInfo">
+                        <mt-button type="primary" plain size="small"  @click.native="handleClick">扫一扫</mt-button>
+                    </mt-field>
+                </li>
+                
+                <!-- <li><mt-field label="派工单号：" placeholder="请输入派工单号" v-model="order.key1" @blur.native.capture="getInfo"></mt-field></li> -->
+                <template v-if="showOrder">
+                    <li><mt-field label="工单部门：" v-model="order.Shortchar01Memo" disabled></mt-field></li>
+                    <li><mt-field label="派工日期：" v-model="order.date01" disabled></mt-field></li>
+                    <li><mt-field label="派工员：" v-model="order.Shortchar07Memo" disabled></mt-field></li>
+                </template>
             </ul>
         </div>
         <div class="plug-table" v-if="orderDetail">
@@ -44,6 +52,7 @@ export default {
     name:"list",
     data(){
         return{
+            showOrder:false,
             order:{},
             orderDetail:null,
         }
@@ -52,29 +61,34 @@ export default {
         this.getInfo();
     },
     methods:{
+        handleClick(){
+            // this.$router.push({ path:'/ScanCode'});
+        },
         getInfo(){
             if(this.order.key1){
                 let params={
                     orderNumber:this.order.key1
                 }
-              this.$http.post('/Material/GetMaterials',params)
-                .then(res=>{
-                    if(res.data.success){
-                        console.log(res);
-                        const {orderDetail,order}=res.data.data;
-                        this.order=order;
-                        this.orderDetail=orderDetail;
-                    }else{
-                        MessageBox('提示', res.data.message).then(()=>{
-                            if(res.data.code===100){
-                                this.$router.push({ path:'/login'});
-                            }
-                        });
-                    }
-              })
-              .catch((err)=>{
-                      MessageBox('', err);
-              });
+                this.$http.post('/Material/GetMaterials',params)
+                  .then(res=>{
+                      if(res.data.success){
+                          this.showOrder=true;
+                          console.log(res);
+                          const {orderDetail,order}=res.data.data;
+                          this.order=order;
+                          this.orderDetail=orderDetail;
+                      }else{
+                          MessageBox('提示', res.data.message).then(()=>{
+                              if(res.data.code===100){
+                                  this.$router.push({ path:'/login'});
+                              }
+                          });
+                      }
+                })
+                .catch((err)=>{
+                    console.log(err);
+                    MessageBox('', '抱歉，请求失败，请稍后再试~');
+                });
             }else{
                 this.order={};
                 this.orderDetail=null
@@ -96,6 +110,9 @@ export default {
         font-size: 1rem;
         .mint-cell{
             min-height: 2.5rem;
+        }
+        .mint-button--small{
+            height: 1.75rem;
         }
     }
     .plug-table{
