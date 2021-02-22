@@ -4,7 +4,7 @@ import VueRouter from 'vue-router'
 import Login from './views/Login'
 import List from './views/List'
 import Detail from './views/Detail'
-
+import QRCode from './views/QRCode'
 
 // 创建路由对象
 var router = new VueRouter({
@@ -26,6 +26,9 @@ var router = new VueRouter({
             path: '/detail',
             query:{},
             component: Detail
+        },
+        {
+            path:'/qrcode',component:QRCode
         }
     ]
 })
