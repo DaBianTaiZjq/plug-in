@@ -34,6 +34,7 @@ export default {
                       console.log(res);
                       if(res.data.success){
                             window.sessionStorage.setItem('token',res.data.data);
+                            window.sessionStorage.setItem('userName',this.form.account);
                             Toast({
                               message: '欢迎进入~'
                             });

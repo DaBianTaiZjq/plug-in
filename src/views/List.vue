@@ -142,6 +142,7 @@ export default {
         }
         .mint-cell{
             min-height: 2.5rem;
+            background: none;
         }
         .mint-button--small{
             height: 1.75rem;

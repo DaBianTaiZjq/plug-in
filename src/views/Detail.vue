@@ -44,8 +44,10 @@ export default {
                   .then(res=>{
                       if(res.data.success){
                           const {data}=res;
+                          Toast({message:data.message})
                           this.info.IsReceived=true;
                           this.info.ReceiveTime=this.getYearMonthDate();
+                          this.info.Recipients=sessionStorage.getItem('userName')||'';
                           console.log(data);
                       }else{
                           MessageBox('提示', res.data.message)
