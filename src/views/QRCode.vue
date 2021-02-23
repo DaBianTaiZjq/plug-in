@@ -1,25 +1,27 @@
 
 <template>
   <div class="scanCode-container">
-    <video id="video" class="video"></video>
-    <!-- <div v-if="devices.length">
-      <label>Change video source:</label>
-      <select v-bind:change="changeDevice">
+    <div v-if="devices.length">
+      <label>摄像头:</label>
+      <select v-model="currentDeviceId" @change="restart">
         <option
           v-for="device in devices"
-          v-bind:key="device.deviceId"
-          value="device.deviceId"
+          :key="device.deviceId"
+          :value="device.deviceId"
         >
           {{ device.label }}
         </option>
       </select>
-    </div> -->
-    <!-- <div>{{ result }}</div> -->
+    </div>
+    <video id="video" class="video"></video>
   </div>
 </template>
 <script>
 import {
-  BrowserMultiFormatReader
+  BrowserMultiFormatReader,
+  NotFoundException,
+  ChecksumException,
+  FormatException,
 } from "@zxing/library";
 export default {
   name: "QRCode",
@@ -27,68 +29,70 @@ export default {
   data: function () {
     return {
       codeReader: new BrowserMultiFormatReader(),
+      currentDeviceId: null,
       devices: [],
-      currentDevice: {},
-      result: null,
     };
   },
   created: function () {
-    this.decode();
+    this.inIt();
   },
   methods: {
     decodeOnce: function (codeReader, deviceId) {
       codeReader
         .decodeFromInputVideoDevice(deviceId, "video")
         .then((result) => {
-          this.result = result.text;
-          sessionStorage.setItem("QRCodeResult", this.result);
-          if(this.result){
+          if (result.text) {
+            sessionStorage.setItem("QRCodeResult", result.text);
             codeReader.reset();
             this.$router.go(-1);
           }
         })
         .catch((err) => {
-          this.result = err;
+          console.log(err);
         });
     },
-    // decodeContinuously: function (codeReader, deviceId) {
-    //   codeReader.decodeFromInputVideoDeviceContinuously(
-    //     deviceId,
-    //     "video",
-    //     (result, err) => {
-    //       if (result) {
-    //         this.result = result.text;
-    //       }
+    decodeContinuously: function (codeReader, deviceId) {
+      codeReader.decodeFromInputVideoDeviceContinuously(
+        deviceId,
+        "video",
+        (result, err) => {
+          if (result) {
+            if (result.text) {
+              sessionStorage.setItem("QRCodeResult", result.text);
+              codeReader.reset();
+              this.$router.go(-1);
+            }
+          }
 
-    //       if (err) {
-    //         // As long as this error belongs into one of the following categories
-    //         // the code reader is going to continue as excepted. Any other error
-    //         // will stop the decoding loop.
-    //         //
-    //         // Excepted Exceptions:
-    //         //
-    //         //  - NotFoundException
-    //         //  - ChecksumException
-    //         //  - FormatException
+          if (err) {
+            // As long as this error belongs into one of the following categories
+            // the code reader is going to continue as excepted. Any other error
+            // will stop the decoding loop.
+            //
+            // Excepted Exceptions:
+            //
+            //  - NotFoundException
+            //  - ChecksumException
+            //  - FormatException
 
-    //         if (err instanceof NotFoundException) {
-    //           this.result = "No QR code found.";
-    //         }
+            if (err instanceof NotFoundException) {
+              console.log("No QR code found.");
+            }
 
-    //         if (err instanceof ChecksumException) {
-    //           this.result =
-    //             "A code was found, but it's read value was not valid.";
-    //         }
+            if (err instanceof ChecksumException) {
+              console.log(
+                "A code was found, but it's read value was not valid."
+              );
+            }
 
-    //         if (err instanceof FormatException) {
-    //           this.result = "A code was found, but it was in a invalid format.";
-    //         }
-    //       }
-    //     }
-    //   );
-    // },
-    decode: function () {
-      this.result = "ZXing code reader initialized";
+            if (err instanceof FormatException) {
+              console.log("A code was found, but it was in a invalid format.");
+            }
+          }
+        }
+      );
+    },
+    inIt: function () {
       this.codeReader
         .getVideoInputDevices()
         .then((videoInputDevices) => {
@@ -101,25 +105,29 @@ export default {
               });
             });
             this.devices = devices;
-            this.currentDevice = this.devices[0];
-            this.decodeOnce(this.codeReader, this.currentDevice.deviceId);
+            this.currentDeviceId = devices[0].deviceId;
+            this.restart();
           }
         })
         .catch((err) => {
           console.error(err);
         });
     },
-    changeDevice: function (index) {
-      this.currentDevice = this.devices[index];
+    restart: function () {
+      this.codeReader.reset();
+      let _this = this;
+      setTimeout(function () {
+        _this.decodeOnce(_this.codeReader, _this.currentDeviceId);
+      }, 500);
     },
   },
-  destroyed(){
+  destroyed() {
     this.codeReader.reset();
-  }
+  },
 };
 </script>
 <style lang="less" scoped>
-.scanCode-container{
+.scanCode-container {
   width: 100vw;
   height: 100vh;
   background: #000;
@@ -129,7 +137,7 @@ export default {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
   }
 }
 </style>
