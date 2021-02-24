@@ -1,17 +1,16 @@
 
 <template>
   <div class="scanCode-container">
-    <div v-if="devices.length">
-      <label>摄像头:</label>
-      <select v-model="currentDeviceId" @change="restart">
-        <option
+    <div v-if="devices.length>0" class="changeCurrentDeviceId">      
+    <select v-model="currentDeviceId" @change="restart">
+      <option
           v-for="device in devices"
           :key="device.deviceId"
           :value="device.deviceId"
         >
           {{ device.label }}
         </option>
-      </select>
+    </select>
     </div>
     <video id="video" class="video"></video>
   </div>
@@ -28,12 +27,13 @@ export default {
   components: {},
   data: function () {
     return {
+      isShow:false,
       codeReader: new BrowserMultiFormatReader(),
       currentDeviceId: null,
       devices: [],
     };
   },
-  created: function () {
+  mounted: function () {
     this.inIt();
   },
   methods: {
@@ -105,7 +105,14 @@ export default {
               });
             });
             this.devices = devices;
-            this.currentDeviceId = devices[0].deviceId;
+            console.log(this.devices);
+            if(this.devices.length>1){
+              this.currentDeviceId = devices[1].deviceId;
+              devices[1].label='后置摄像头'
+            }else{
+              this.currentDeviceId = devices[0].deviceId;
+              devices[0].label='前置摄像头'
+            }            
             this.restart();
           }
         })
@@ -114,16 +121,17 @@ export default {
         });
     },
     restart: function () {
+
       this.codeReader.reset();
       let _this = this;
       setTimeout(function () {
         _this.decodeOnce(_this.codeReader, _this.currentDeviceId);
       }, 500);
-    },
+    }
   },
   destroyed() {
     this.codeReader.reset();
-  },
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -131,6 +139,23 @@ export default {
   width: 100vw;
   height: 100vh;
   background: #000;
+  .changeCurrentDeviceId{
+    padding: .3125rem;
+    select{
+      height: 2.5rem;
+      padding: .3125rem;
+      text-align: center;
+      border-radius: .3125rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      appearance: none;
+      outline: none;
+      color: #19be6b;
+      background: #000;
+      border: .0625rem solid #19be6b;
+    }
+  }
   .video {
     width: 18.75rem;
     height: 18.75rem;
