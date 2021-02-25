@@ -75,7 +75,7 @@ export default {
     // },
     methods:{
         handleClick(){
-            this.$router.push({ path:'/qrcode'});
+            this.$router.push({ path:'/scancode'});
         },
         getInfo(){
             if(this.order.key1){
@@ -123,8 +123,8 @@ export default {
         font-size:1rem;        
     }
     .plug-info{
-        height: 10rem;
-        margin-top: 3.125rem;
+        height: 12.2rem;
+        padding-top: 2.5rem;
         font-size: 1rem;
         background-color:#fff;
         ul{

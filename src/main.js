@@ -12,8 +12,7 @@ import './assets/css/global.css'
 import 'mint-ui/lib/style.css'
 
 //配置请求的路径
-// axios.defaults.baseURL='http://localhost:8081/api/'
-// axios.defaults.baseURL='https://172.20.109.159:8081/api/'
+// axios.defaults.baseURL='https://172.20.109.159:8080/api/'
 axios.defaults.baseURL='https://172.20.109.163:30000/Lesso/'
 // 设置拦截器
 axios.interceptors.request.use(config => {
